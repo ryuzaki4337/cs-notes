@@ -11,6 +11,7 @@ Example topics you may find here (each in its own folder):
 - Databases
 - Theory / Math
 
+
 Contributing
 - Add new notes or improve existing ones by creating a pull request.
 - Organize content into a relevant folder and use clear filenames and headings.
