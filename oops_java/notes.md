@@ -158,3 +158,14 @@
     - Initialization: Static blocks allow for the initialization of static variables, ensuring that common resources are ready for use.
 
 - Inner classes are classes that are defined within another class.
+
+- Relationships between classes can be categorized into three major types:
+    - Association: A general relationship where one class interacts with another.
+    - Aggregation: A specialized form of association that represents a "has-a" relationship with a weaker bond.
+    - Composition: A more restrictive form of aggregation where the lifecycle of the related objects is tightly coupled.
+
+- In real-world systems, a class can participate in multiple types of relationships simultaneously.
+
+- Cloning in Java can be categorized into two types:
+    - Shallow Cloning: Copies primitive fields and references for objects. The cloned object shares the same reference for nested objects.
+    - Deep Cloning: Creates a completely independent copy of the original object, including copies of all nested objects.
