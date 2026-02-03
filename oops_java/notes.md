@@ -47,18 +47,73 @@
 
 - In Java, a class can have multiple constructorss, a concept known as constructor overloading.
 
-- Encapsulation: Practove of bundling data (variables) and methods that operate on the data into a single unit, know as the class, restricting direct access to the date from outside the class.
-    - Data hiding: Encapsulation hides the internal details of how an object works. THe object's data is kept private and can be accessed or modified through getters and setters.
-    - Controlled Access: Through encapsulation, only specific methods are provided to access or modify the data, ensuring more controlled and secure interactions with the object's data.
+- Encapsulation is a fundamental concept in object-oriented programming (OOP) where the internal details (data and logic) of an object are hidden from the outside world. It is the process of bundling the object's data (attributes) and methods (functions) together into a single unit or class. The primary goal is to protect the internal state of an object from unintended modifications and provide controlled access to it.
 
-- Inheritance: Allows a class to inherit properties and behaviors (fields and methods) from another class. Helps in re8using existing code and creating a hierarchial relationships between classes.
-    - Parent (Super class) and Child (Sub class): In inheritance, the class that is inherited from is Parent class and the class that inherits is called Child class.
-    - Reuse of code: Child class automatically gets the methods of parent class.
-    - Extending functionality: The child clas can add new features or override existing ones to modify the behavior inherited from parent class.
+- Encapsulation enforces data hiding and ensures that attributes (variables) within a class are not directly accessible to other classes or external code. Instead, it provides getter and setter methods to access and modify these private attributes. By making attributes private, encapsulation maintains control over how the data is accessed and modified, preventing unwanted changes or access.
 
-- Polymorphism: Allows objects to be treated as instances of their parent class on interface, while having the ability to take on different forms or behaviors. It enables the same method to perform different actions depending on the object calling it.
+- Importance of Encapsulation:
+    - Data Security
+    - Flexibility and Maintenance
+    - Modular Code
+    - Improved Debugging and Testing
+    - Reduced Complexity
+
+- Inheritance is a fundamental concept in object-oriented programming (OOP) that allows a class (subclass) to inherit the attributes (fields) and behaviors (methods) of another class (superclass). It is the mechanism that promotes code reuse and establishes a hierarchical relationship between classes.
+
+- Parent Class
+    - The parent class (also known as the superclass) is the class that provides common properties (attributes) and behaviors (methods) that are shared by one or more subclasses. It serves as a template or blueprint from which other classes (subclasses) can inherit. For example, School class.
+- Subclass (Child Class)
+    - A subclass (also known as a child class) is a class that inherits from a parent class. The subclass can reuse, extend, or override the attributes and methods of the parent class to specialize or modify the inherited functionality. For example, Student class.
+
+- In Java, there are three major types of inheritance:
+    - Single Inheritance
+    - Multilevel Inheritance
+    - Hierarchical Inheritance
+
+- Advantages of Using Inheritance
+    - Reusability
+    - Modularity
+    - Extensibility
+    - Maintainability
+
+- Multiple inheritance refers to a feature in object-oriented programming where a class can inherit properties and methods from more than one parent class. This allows the child class to combine the functionality of multiple parent classes.
+
+- Java does not allow multiple inheritance using classes to avoid the diamond problem, it allows multiple inheritance through interfaces, as interfaces only declare method signatures (no method bodies initially), thus preventing conflicts.
+
+- Polymorphism is one of the key concepts in object-oriented programming (OOP) and refers to the ability of a single entity (like a method, operator, or object) to behave differently in different contexts.
+
+- There are two main types of polymorphism in Java:
     - Compile-time polymorphism (Method overloading): Multiple methods can have the same name but different parameter lists.
     - Run-time polymorphism (Method overriding): A method in the child class can have the same name and parameters as in the parent class, but the child class provides its own implementation.
+
+- Note that the return type cannot be a differentiator for Method Overloading.
+
+- A static method cannot be overriden.
+
+- Abstraction is one of the fundamental concepts of Object-Oriented Programming (OOP). It is the process of hiding the implementation details and showing only the necessary features or interface to the user.
+
+- Abstraction is achieved through abstract classes and interfaces in languages like Java.
+
+- Key Features of Abstraction:
+    - Hiding Implementation Details
+    - Abstract Methods
+    - Concrete Methods
+
+- Benefits of Abstraction in Programming
+    - Simplify the system
+    - Improve maintainability
+    - Increase reusability
+    - Provide security
+
+- An abstract class can inherit from another abstract class just like a regular class would. The subclass (child abstract class) will inherit the abstract methods and behaviors of the parent class, but it is not required to implement the abstract methods from the parent class unless it is a concrete class (i.e., a class that is not abstract). If the subclass is also abstract, it can either:
+    - Implement the abstract methods from the parent class, or
+    - Leave them unimplemented (in which case, the subclass must also be declared as abstract).
+
+- An abstract class is designed to be inherited by other classes, and it is not meant to be instantiated on its own. However, an abstract class can have a constructor, which can be invoked by a subclass when an instance of the subclass is created. This allows the abstract class to initialize its fields before the subclass adds its own specific behaviors.
+
+- Abstract Class Constructor: An abstract class can have constructors, but you cannot create an instance of the abstract class directly. The constructor is only called when a subclass object is created.
+
+- Subclass Constructor: When a subclass is instantiated, its constructor can call the constructor of the abstract class using the super() keyword.
 
 - Abstraction: Focuesses on hiding complex implementation details and exposing only the essential featutres of object or methods.
     - Hides complexity: Abstraction allows a user to interact with an object or method without neding to understand the underlying details of how it works.
@@ -72,8 +127,34 @@
     - Abstract Methods: These are methods without implementation in the abstraction class, and the subclass are requried to provie their own implementation.
     - Can have regular methods: Along with abstract methods, an abstract class can also have fully defined methods.
 
+- An interface in Java is a blueprint of a class that defines a contract for behavior but does not provide an implementation. It contains a set of abstract methods (methods without a body) that a class must implement if it chooses to "sign the contract" by implementing the interface.
+
+- An interface cannot have instance variables. All fields in an interface are implicitly public, static, and final. This means they act as constants and cannot be changed. Attempting to declare a non-static or non-final field will result in a compilation error.
+
+- Interfaces cannot have constructors. 
+
+- A class in Java can implement multiple interfaces.
+
+- Key Features of Interfaces:
+    - Multiple Inheritance
+    - Contracts
+    - Loosely Coupled Systems
+
+- Interfaces in Java can extend other interfaces, allowing for inheritance. When an interface inherits another, it can add new methods to the contract defined by the parent interface.
+
 - Interfaces:
     - Pure abstraction: An interface only defines what methods should be present, the actual implementation is provided by the class that implement the interface.
     - No instantiation: Similar to abstract classes, they serve only as blueprint.
     - Multiple implementation: A class can implement multiple interfaces, allowing for more flexibility compared to single inheritance in classes.
     - Loose coupling: Interfaces help to reduce the dependencies between parts of the code, making the system more modular and easier to maintain.
+
+- The static keyword is used to indicate that a member belongs to the class rather than to any specific instance of the class. It can be applied to variables, methods, blocks, and nested classes. Members marked as static are shared across all instances of the class, meaning they are loaded only once in memory during the class's lifecycle.
+
+- Static methods cannot directly access or invoke non-static methods or variables because static methods do not depend on a class instance. However, non-static members can be accessed indirectly by creating an instance of the class.
+
+- Advantages of Static Members in Java:
+    - Memory Efficiency: Static variables are loaded into memory only once, reducing memory usage.
+    - Utility Functions: Static methods are ideal for utility or helper methods that do not require object-specific data (e.g., Math.sqrt()).
+    - Initialization: Static blocks allow for the initialization of static variables, ensuring that common resources are ready for use.
+
+- Inner classes are classes that are defined within another class.
