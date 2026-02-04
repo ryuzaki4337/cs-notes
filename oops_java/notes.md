@@ -169,3 +169,9 @@
 - Cloning in Java can be categorized into two types:
     - Shallow Cloning: Copies primitive fields and references for objects. The cloned object shares the same reference for nested objects.
     - Deep Cloning: Creates a completely independent copy of the original object, including copies of all nested objects.
+
+- An object in Java typically follows this lifecycle: Creation → Usage → Garbage Collection → Destruction
+    - Creation: Allocated memory on the heap using new.
+    - Usage: Methods and fields of the object are used.
+    - Garbage Collection: When no references point to the object, it becomes eligible for GC.
+    - Destruction: JVM garbage collector destroys and reclaims the memory.
