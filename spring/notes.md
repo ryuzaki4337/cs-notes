@@ -1,3 +1,5 @@
+### Spring MVC
+
 - Spring MVC is fundamentally based on the "thread-per-request" model.
 
 - In this traditional, synchronous and blocking architecture, a dedicated thread from a servlet container's (like Apache Tomcat, the default in Spring Boot) thread pool handles a single request from start to finish.
@@ -19,3 +21,43 @@
     - Horizontal Scaling (add more servers)
     - Java 21 (Project Loom and Virtual Threads)
     - Reactive programming with non-blocking I/O.
+
+![Traditional Spring MVC Arch](image-4.png)
+
+### Spring Webflux
+
+![alt text](image-1.png)
+
+- Enables developers to build non-blocking applications that can handle asynchronous and synchronous operations
+
+- Focuses on data streams and the propagation of change.
+
+- Useful for applications that need to handle a large number of concurrent users or data streams efficiently.
+
+- Typically employs a functional programming style rather than an imperative one.
+    - Reactive Streams to handle data flow
+    - Lambda functions for concise code
+    - Operators like map() and filter() to process data.
+
+![Data Stream](image-2.png)
+
+![alt text](image-3.png)
+
+- Back pressure is a way for Subscribers to manage how much data they receive from Publishers.
+
+![alt text](image-5.png)
+
+![Blocking vs Non-Blocking](image-6.png)
+
+- Spring WebFlux
+    - A non-blocking web framework from Spring.
+    - Handles large number requests with fewer resources,
+    - Supports reactive programming model. 
+
+![alt text](image-7.png)
+
+![alt text](image-8.png)
+
+- How Spring WebFlux is different?
+    - Reactive programming
+    - Supports both imperative and reactive programming styles.
