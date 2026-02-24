@@ -25,3 +25,12 @@
 - TreeMap is a red-black tree-based implementation of the Map interface. It stores entries in sorted order based on keys.
 
 - A Comparator allows you to define custom sorting logic for collections. You can use it to sort objects based on specific attributes.
+
+- HashMap: Like unordered_map in C++, HashMap offers an average time complexity of O(1). However, due to collisions, its worst-case performance can degrade to O(N). Post Java 8, the worst-case performance is O(log N).
+
+- TreeMap: Functions similarly to map in C++, with a time complexity of O(log N), ensuring consistent performance across all operations.
+
+- In C++, strings are mutable, meaning their contents can be altered after they are created. This mutability allows for dynamic modifications, such as appending characters or altering existing characters.
+
+- Strings in Java are immutable, meaning once a string object is created, its contents cannot be changed. Any operation that seems to modify a string actually creates a new string object.
+
