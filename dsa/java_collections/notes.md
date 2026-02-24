@@ -33,4 +33,3 @@
 - In C++, strings are mutable, meaning their contents can be altered after they are created. This mutability allows for dynamic modifications, such as appending characters or altering existing characters.
 
 - Strings in Java are immutable, meaning once a string object is created, its contents cannot be changed. Any operation that seems to modify a string actually creates a new string object.
-
