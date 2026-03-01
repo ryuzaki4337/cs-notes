@@ -46,12 +46,15 @@
 
     - Deployment:
         - Blueprint for application pods.
+        - Abstraction over Pods.
         - Configuration of pods.
         - DB can't be replicated via deployment, because DB has state which is its data.
 
     - StatefulSet:
         - For stateful apps like databases.
         - it is not easy to maintain hence DBs are often hosted outside of K8s cluster.
+
+    - Replicaset is managing the replicas of a pod.
 
 - Kubernetes Architecture:
     - Worker machine in K8s cluster:
@@ -90,3 +93,16 @@
         - Add it to the cluster.
 
 - kubectl: Command line tool for K8s cluster.
+
+- kubectl commands: [Link](https://gitlab.com/nanuchi/youtube-tutorial-series/-/blob/master/basic-kubectl-commands/cli-commands.md)
+
+- K8s Yaml Configuration File:
+    - Metadata: Name, label etc.
+    - Specification: Configuration of the specific component mentioned in the type
+    - Status: 
+        - Automatically generated and added by K8s. 
+        - In case of any misalignment with the current state and specification, then K8s will automatically adjust the cluster state to match the specification. 
+        - For example, if the number of replicas in the current state is 1, but the number of replicas mentioned in the specification is 2, then K8s automatically adds a new replica. 
+        - K8s gets the status from the etcd.
+
+    - YAML has a strict indentation policy.
