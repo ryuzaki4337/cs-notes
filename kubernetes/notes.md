@@ -49,21 +49,41 @@
         - Abstraction over Pods.
         - Configuration of pods.
         - DB can't be replicated via deployment, because DB has state which is its data.
+        - Deployment manages ReplicaSets
+        - Supports rolling updates and rollbacks
+        - Maintains desired number of replicas
 
     - StatefulSet:
         - For stateful apps like databases.
         - it is not easy to maintain hence DBs are often hosted outside of K8s cluster.
+        - Stable network identity (pod-0, pod-1)
+        - Stable persistent storage
+        - Ordered pod startup/shutdown
+        - Pods are not interchangeable
 
-    - Replicaset is managing the replicas of a pod.
+    - Replicaset:
+        - Ensures a specified number of identical Pods are running
+        - Uses label selectors
+        - Usually not created directly — managed by Deployment
+        - No rolling update / rollback management, hence not used directly.
+
+    - DaemonSet:
+        - ensures One pod runs on every node (or selected nodes)
+        - Common uses:
+            - Log collectors (Fluentd)
+            - Monitoring agents (Prometheus node exporter)
+            - Security agents
+            - CNI plugins
+        - Why can’t Deployment do this? Because Deployment schedules based on replica count — not one-per-node.
 
 - Kubernetes Architecture:
     - Worker machine in K8s cluster:
         - Each node has multiple application pods on it.
 
         - 3 processes must be installed on every node.
-            - Container runtime.
-            - Kubelet: It interacts with both the container and node. It starts the pod with a container inside.
-            - Kube Proxy : Forwards the requests.
+            - Kubelet: It interacts with both the container and node. It starts the pod with a container inside. communicates with API server and manages pods
+            - Kube Proxy : handles networking and service routing.
+            - Container runtime: runs containers
         
         - Worker nodes do the actual work.
     
@@ -76,7 +96,13 @@
                 - Decides on which node the pod needs to be scheduled based on the resources available on that worker node, where the starting of the pod is actually done by the Kubelet.
             - Controller Manager: 
                 - Detects cluster state changes(like pods dying).
-                -  In case of pods dying, it makes a call to the scheduler to schedule for new pods.
+                - Controller Manager continuously compares:
+                    - Desired state (from etcd via API Server)
+                    - Actual state
+                - If a pod dies:
+                    - Controller updates the desired state (creates a new Pod object)
+                    - Scheduler detects an unscheduled pod and assigns it to a node
+                    - Kubelet on that node actually creates the pod
             - etcd: 
                 - Key value store of a cluster store. It is the cluster brain. 
                 - Cluster changes get stored in the key value store. 
@@ -202,13 +228,20 @@
     - Within & outside cluster.
 
 - ClusterIP services:
+    - Exposes service internally within the cluster.
     - Default type.
+    - Gets a virtual IP
+    - Traffic flow: Pod → ClusterIP → kube-proxy → Target Pod
+    - Cannot be accessed from outside cluster
 
 - Headless services:
     - Clients wants to communicate with 1 specific pod directly.
     - Pods want to talk directly with specific pod.
     - So, not randomly selected.
     - Use Case: Stateful applications like databases.
+    - Traffic flow: Client → Pod IP directly
+    - No virtual IP is created
+    - No kube-proxy load balancing needed
 
     - Client needs to figure out IP addresses of each pod.
 
@@ -224,11 +257,130 @@
     - External traffic has access to fixed port on each worker node.
     - Range: 30000 - 32767
     - It is not secure, not for external connection.
+    - Traffic flow: Client → NodeIP:NodePort → kube-proxy → Pod
 
 - LoadBalancer Services:
     - Is an extension of NodePort service, which in turn is an extension of ClusterIP.
-    - Becomes accessible externally through cloud providers LoadBalancer.
+    - Used in cloud environments.
+    - Provisions external cloud load balancer
     - NodePort and ClusterIP service are created automatically.
     - Range: 30000 - 32767
+    - Traffic flow: External Client → Cloud Load Balancer → NodePort → kube-proxy → Pod
 
 - Configure Ingress and LoadBalancer for production environments.
+
+- When kubectl apply -f deployment.yaml
+    - Step 1: kubectl Talks to API Server
+        - kubectl reads the YAML
+        - Converts it into JSON
+        - Sends a REST API request to the kube-apiserver
+
+    - Step 2 — Authentication & Authorization
+        - API server:
+            - Authenticates the user (certificate / token / RBAC)
+            - Checks authorization (RBAC rules)
+            - If allowed → proceeds
+
+    - Step 3 — Admission Controllers
+        - Before storing the object:
+        - Mutating admission controllers may modify the object
+        - Validating admission controllers may reject it
+
+        - Example:
+            - Resource quotas
+            - Pod security policies
+            - Defaulting values
+
+    - Step 4 — Object Stored in etcd
+        - If everything passes:
+            - API server stores the desired state in etcd
+            - Now Kubernetes knows:
+                - "User wants a Deployment with 3 replicas"
+
+    - Step 5 — Controller Manager Reacts
+        - Deployment controller:
+            - Sees new Deployment
+            - Creates a ReplicaSet
+
+        - ReplicaSet controller:
+            - Sees desired replicas (say 3)
+            - Creates 3 Pod objects (unscheduled)
+
+    - Step 6 — Scheduler Assigns Nodes
+        - Scheduler:
+            - Watches for Pods without a node
+            - Evaluates nodes based on:
+                - CPU/memory
+                - Taints/tolerations
+                - Node selectors
+
+            - Assigns a node to each pod
+
+    - Step 7 — Kubelet Creates Containers
+        - On the selected worker node:
+            - kubelet notices the Pod assigned to it
+            - Pulls the image
+            - Talks to container runtime (containerd)
+            - Starts containers
+
+    - Step 8 — kube-proxy Updates Networking
+        - kube-proxy updates iptables/ipvs
+        - Ensures service routing works
+
+- Services will NOT work properly without kube-proxy. Headless Services can still work without kube-proxy. Because they bypass virtual IP routing.
+
+- Pending means the pod has not been scheduled onto a node yet.
+    - Common Reasons for Pending:
+        - Insufficient Resources
+        - Taints & Tolerations: 
+            - If node has:
+                taints:
+                    key=value:NoSchedule
+            - And pod has no matching toleration → stays Pending.
+
+        - Node Selector / Affinity Issues
+            - If pod has:
+                nodeSelector:
+                    disktype: ssd
+            - But no node has that label → Pending forever.
+        - Resource Quotas: Namespace quota exceeded.
+
+- CrashLoopBackOff → container issue; Pending → scheduling issue
+
+- Even if kubectl top nodes shows free memory, Kubernetes scheduler uses resource requests, not actual usage. If existing pods have high memory requests, the scheduler may not find enough allocatable memory for the new pod, resulting in an Insufficient memory error.
+
+- If no requests are defined and scheduling still fails, I would check for a LimitRange in the namespace. LimitRange can automatically assign default resource requests, which may cause the scheduler to reject the pod due to insufficient allocatable memory.
+
+- HPA scales based on:
+    - CPU utilization (most common)
+    - Memory utilization
+    - Custom metrics (Prometheus)
+    - External metrics (queue length, requests/sec)
+
+    Also:
+    - HPA works by modifying: .spec.replicas of a Deployment/ReplicaSet/StatefulSet.
+    - Important: HPA does NOT directly create pods.
+
+    - HPA is preferred for stateless workloads because horizontal scaling is safer and avoids restarts.
+
+- VPA cannot resize a running pod.
+    - Recommends new CPU/memory values
+    - Evicts the pod
+    - Recreates it with new resource requests
+    - So there is a restart involved.
+
+- Cluster Autoscaler scales nodes, not pods.
+    - Adds new nodes when pods cannot be scheduled
+    - Removes nodes when underutilized
+
+- HPA scales the number of pods based on resource or custom metrics. VPA adjusts resource requests of individual pods by recreating them with updated values. Cluster Autoscaler scales the number of nodes in the cluster when there are unschedulable pods or removes underutilized nodes. Together, HPA handles pod-level scaling and Cluster Autoscaler handles infrastructure-level scaling.
+
+- If scaling to 20 pods doesn’t improve latency and CPU is only 40%, I would suspect the bottleneck is not CPU-bound. It could be an application-level concurrency limitation, a downstream dependency like a database bottleneck, or the wrong scaling metric being used. In such cases, scaling horizontally won’t solve the issue unless the true bottleneck is identified.
+
+- When a node crashes, its heartbeats stop and the control plane marks it NotReady. After a grace period, the Node Controller evicts the pods. Replica-based controllers detect the missing replicas and create new Pod objects. The scheduler assigns them to healthy nodes. Services automatically remove the failed pod endpoints. If there isn’t enough capacity, Cluster Autoscaler may add new nodes.
+
+- If the node comes back before the pod eviction timeout, it will be marked Ready again and the existing pods will continue running. If it comes back after eviction, the controllers would have already recreated the pods elsewhere, and the kubelet will terminate any orphaned containers when the node rejoins.
+
+- By default:
+    - Node heartbeat grace period ≈ 40 seconds
+    - Pod eviction timeout ≈ 5 minutes
