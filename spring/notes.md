@@ -61,3 +61,38 @@
 - How Spring WebFlux is different?
     - Reactive programming
     - Supports both imperative and reactive programming styles.
+
+- Presentation Layer:
+    - @RestController
+    - @Controller
+
+- Service Layer: (business logic)
+    - @Service
+    - @Bean
+
+- Data Layer:
+    - @Entity
+    - @Repository
+
+- Infrastructure Layer:
+    - @Configuration
+    - @EnableWebSecurity
+    - @Bean
+
+- Controller Advice: 
+    - Controller advice is a feature in Spring framework that allows you to define global exception handlers for your application.
+    - It is useful when you want to handle exceptions across multiple controllers without duplicating exception handling code.
+
+- Controller Advice Advantages:
+    - Centralized exception handling.
+    - Consistent error responses across the application.
+    - Separation of concerns between business logic and error handling.
+    - Improved code maintainbility.
+
+- @ControllerAdvice is used for both traditional Spring MVC controllers and RESTful controllers.
+
+- @RestControllerAdvice is specifically designed for use with @Restcontroller. It combines the behavior of @ControllerAdvice and @ResponseBody.
+
+- When using @ControllerAdvice, you may need to add @ResponseBody to your methods if you want to return data directly rather than a view name.
+
+- With @RestControllerAdvice, @ResponseBody is automatically applied to all methods, meaning the return values are automatically serilized to the response body. 
